@@ -5,13 +5,11 @@
 /.pnp
 .pnp.js
 /config
-
 # testing
 /coverage
 
 # production
 /build
-/fbConfig.js
 
 # misc
 .DS_Store
