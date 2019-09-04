@@ -1,11 +1,11 @@
 import React, { Component } from "react"
-import { createProduct } from '../../store/actions/shopAction'
+import * as actionType from '../../store/actions/index'
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import { compose } from 'redux'
 import {Redirect} from 'react-router-dom'
-import { getShopProducts,unSetProducts } from '../../store/actions/shopAction'
 import ProductList from './ProductList'
+
 class ShopDetails extends Component {
     constructor(props){
         super(props);
@@ -30,7 +30,7 @@ class ShopDetails extends Component {
     if (shop) {
         // console.log(shop)
         return (
-            <div>
+            <div className="container">
                 <h1>InSideShop {shop.name}</h1>
                 {auth.uid===shop.ownerId&&<button onClick={()=>this.goCreate()}>Add Product</button>}
                 {(auth.uid===shop.ownerId)&&this.state.goCreate?
@@ -40,7 +40,11 @@ class ShopDetails extends Component {
                 }}>ADD Product</Redirect>
                 :null
                 }
-                {this.props.isLoaded&&<ProductList products={this.props.products} />}
+                {this.props.isLoaded&&<ProductList 
+                deleteProduct={this.props.deleteProduct} 
+                isUid={auth.uid===shop.ownerId} 
+                products={this.props.products} 
+                />}
                 
             </div>
         )
@@ -71,9 +75,10 @@ const mapStateToProps = (state, ownProps) => {
 }
 const mapDispatchToProps=(disatch)=>{
     return{
-        createProduct:(product)=>disatch(createProduct(product)),
-        getShopProducts:(shopId)=>disatch(getShopProducts(shopId)),
-        unSetProducts:()=>disatch(unSetProducts())
+        createProduct:(product)=>disatch(actionType.createProduct(product)),
+        getShopProducts:(shopId)=>disatch(actionType.getShopProducts(shopId)),
+        unSetProducts:()=>disatch(actionType.unSetProducts()),
+        deleteProduct:(productID)=>disatch(actionType.deleteProduct(productID))
     }
   }
 export default compose(

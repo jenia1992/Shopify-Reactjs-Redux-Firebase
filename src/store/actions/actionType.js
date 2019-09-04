@@ -1,0 +1,15 @@
+export const LOGIN_ERROR="login error";
+export const LOGIN_SUCCESS="login success";
+export const SIGNOUT_SUCCESS="sign out success";
+export const CREATE_SHOP="shop created";
+export const CREATE_SHOP_ERROR="shop creating failed";
+export const CREATE_PRODUCT="product created";
+export const CREATE_PRODUCT_ERROR="product creating failed";
+export const URL_CREATED="url created "
+export const URL_CREATE_ERROR="url creating error"
+export const URL_DELETE="url deleted"
+export const URL_DELETE_ERROR="url delete failed"
+export const GET_PRODUCTS="get products of current shop"
+export const UNSET_PRODUCTS="unset current shop products"
+export const DELETE_PRODUCT="product deleted"
+export const DELETE_PRODUCT_ERROR="product detele error"

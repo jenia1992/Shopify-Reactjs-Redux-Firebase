@@ -1,3 +1,4 @@
+import * as actionType from "./actionType"
 export const signIn =()=>{
     return(dispatch,getState,{getFirebase,getFirestore})=>{
         const firebase =getFirebase();
@@ -12,17 +13,35 @@ export const signIn =()=>{
          })
          
         }).then(()=>{
-            dispatch({type:'LOGIN_SUCCESS'})
+            dispatch(updateSuccess())
         }).catch(err=>{
-            dispatch({type:'LOGIN_ERROR',err})
+            dispatch(updateError(err))
         })
       }
+    }
+    export const updateSuccess=()=>{
+        return {
+            type:actionType.LOGIN_SUCCESS,
+            payload:null
+        }
+    }
+    export const updateError=(err)=>{
+        return {
+            type:actionType.LOGIN_ERROR,
+            payload:err
+        }
     }
 export const signOut=()=>{
     return(dispatch,getState,{getFirebase})=>{
         const firebase = getFirebase();
         firebase.auth().signOut().then(()=>{
-            dispatch({type:'SIGNOUT_SUCCESS'})
+            dispatch(updateSignOut())
         })
+    }
+}
+export const updateSignOut=()=>{
+    return {
+        type:actionType.LOGIN_SUCCESS,
+        payload:'SIGNOUT_SUCCESS'
     }
 }

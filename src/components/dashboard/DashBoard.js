@@ -10,8 +10,9 @@ class DashBoard extends Component {
         // console.log('object', this.props)
         const { shops } = this.props
         return (
-            <div className="row">
-                <ShopQuery cat={""} />
+            <div className="container">
+                <ShopQuery fromCollection="" where1="" condition="" where2="" />
+                {/* <ShopQuery fromCollection="shops" where1="category" condition="==" where2="Clothes" /> */}
             </div>
         )
     }

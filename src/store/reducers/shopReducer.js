@@ -1,45 +1,53 @@
+import * as actionType from "../actions/actionType"
+import { updateObject } from "./utilReducer"
 const initState = {
-    shops:[],
-    products:[],
-    prodLoaded:false
+    shops: [],
+    products: [],
+    prodLoaded: false,
+    shopError: null
 }
-const ShopReducer = (state = initState,action)=>{
-    switch (action.type){
-        case 'CREATE_SHOP':
-            console.log('created shop', action.shop)
-            return state;
-        case 'CREATE_SHOP_ERROR':
-            console.log('create shop error', action.err)
+const ShopReducer = (state = initState, action) => {
+    switch (action.type) {
+
+        case actionType.CREATE_SHOP:
             return state
-        case 'CREATE_PRODUCT':
-            console.log('created product', action.product)
+
+        case actionType.CREATE_SHOP_ERROR:
+            return updateObject(state, { shophError: action.payload })
+
+        case actionType.CREATE_PRODUCT:
             return state
-        case 'CREATE_PRODUCT_ERROR':
-            console.log('create product error', action.err)
+
+        case actionType.CREATE_PRODUCT_ERROR:
+            return updateObject(state, { shophError: action.payload })
+
+        case actionType.URL_CREATED:
             return state
-        case 'URL_CREATED':
-            console.log('url created',action.url)
+
+        case actionType.URL_CREATE_ERROR:
             return state
-        case 'URL_CREATE_ERROR':
-            console.log('url created',action.err)
+        case actionType.URL_DELETE:
             return state
-        case 'GET_PRODUCTS':
-            console.log('products ready',action.productsArr)
-            return {
-                ...state,
-                products:action.productsArr,
-                prodLoaded:true
-            }
-            case 'UNSET_PRODUCTS':
-                    console.log('products unSet',state.products)
-                    return {
-                        ...state,
-                        products:[],
-                        prodLoaded:false
-                    }
+
+        case actionType.URL_DELETE_ERROR:
+            return state
+
+
+        case actionType.GET_PRODUCTS:
+            return updateObject(state, { products: action.payload, prodLoaded: true })
+
+        case actionType.UNSET_PRODUCTS:
+            return updateObject(state, { products: [], prodLoaded: false })
+
+        case actionType.DELETE_PRODUCT:
+            return  updateObject(state, { products:action.payload })
+
+        case actionType.DELETE_PRODUCT_ERROR:
+            return updateObject(state, { shopError:action.payload })
+
         default:
             return state
     }
-    
+
 }
 export default ShopReducer

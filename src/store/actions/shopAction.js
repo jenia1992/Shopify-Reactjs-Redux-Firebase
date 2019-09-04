@@ -1,3 +1,4 @@
+import * as actionType from './actionType'
 import {storage} from '../../config/fbConfig'
 export const createShop = (shop) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
@@ -9,11 +10,23 @@ export const createShop = (shop) => {
             
 
         }).then(() => {
-            dispatch({ type: 'CREATE_SHOP', shop: shop })
+            dispatch(updateCreateShop(shop))
         }).catch((err) => {
-            dispatch({ type: 'CREATE_SHOP_ERROR', err })
+            dispatch(updateErrorShop(err))
         })
 
+    }
+}
+export const updateCreateShop=(shop)=>{
+    return {
+        type:actionType.CREATE_SHOP,
+        payload:shop
+    }
+}
+export const updateErrorShop=(err)=>{
+    return {
+        type:actionType.CREATE_SHOP_ERROR,
+        payload:err
     }
 }
 
@@ -33,13 +46,25 @@ export const createProduct = (product) => {
             }).than(()=>{
                 console.log("Created Product")
 
-            dispatch({ type: 'CREATE_PRODUCT', product: product })
+            dispatch(updateCreateProduct(product))
             })
             
         }).catch((err) => {
-            dispatch({ type: 'CREATE_PRODUCT_ERROR', err })
+            dispatch(updateErrorProduct(err))
         })
 
+    }
+}
+export const updateCreateProduct=(product)=>{
+    return {
+        type:actionType.CREATE_PRODUCT,
+        payload:product
+    }
+}
+export const updateErrorProduct=(err)=>{
+    return {
+        type:actionType.CREATE_PRODUCT_ERROR,
+        payload:err
     }
 }
 
@@ -61,44 +86,85 @@ export const getShopProducts = (shopId) => {
                     
                 });
                 // console.log(productsArr)
-                dispatch({type:"GET_PRODUCTS",productsArr})
+                dispatch(updateGetProducts(productsArr))
             })
             .catch(err => {
                 console.log('Error getting documents', err);
             });
     }
 }
+export const updateGetProducts=(productsArr)=>{
+    return {
+        type:actionType.GET_PRODUCTS,
+        payload:productsArr
+    }
+}
+export const updateUnSetProducts=()=>{
+    return {
+        type:actionType.UNSET_PRODUCTS,
+        payload:null
+    }
+}
+
 export const uploadImgToStorage=(imgdata)=>{
-   const uploadTask = storage.ref(`images/${imgdata.name}`).put(imgdata);
-//    return dispatch=>{
-    
-//    }
+    // let randomInt=Math.floor(Math.random() * Math.floor(1000))
+    // console.log(imgdata.name+randomInt)
+      let a=imgdata.name.split(".")
+      a[0]=a[0]+Math.floor(Math.random() * Math.floor(1000))
+      let imageUniqeName=a.join(".")
+   const uploadTask = storage.ref(`images/${imageUniqeName}`).put(imgdata);
   return dispatch =>{
       return new Promise((resolve,reject)=>{
         uploadTask.on('state_changed',(snapshot)=>{
             //progress function
         },(err)=>{
             console.log(err)
-            dispatch({ type: 'URL_CREATE_ERROR',err })
+            dispatch({ type: 'URL_CREATE_ERROR',payload:err })
             reject(err)
         },()=>{
             //complete function
-            storage.ref('images').child(imgdata.name).getDownloadURL().then(url=>{
-             dispatch({ type: 'URL_CREATED',url })
+            storage.ref('images').child(imageUniqeName).getDownloadURL().then(url=>{
+             dispatch({ type: 'URL_CREATED',payload:url })
             //  console.log(url)
-             resolve(url)
+             resolve({url:url,file:imageUniqeName})
             })
         })
   })
-  }
-
+  
+    }
 }
 
 export const unSetProducts=()=>{
     
    return dispatch =>{
-       dispatch({type:"UNSET_PRODUCTS"})
+       dispatch(updateUnSetProducts())
  
  }
 }
+ 
+//DELETE
+
+
+
+export const deleteProduct = (product) => {
+    console.log("PRODUCTTTT FILEEEEEEE",product.file)
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        
+            getFirestore().collection("products").doc(product.productId).delete()
+
+        const deleteTask = storage.ref(`images/${product.file}`)
+        deleteTask.delete()
+
+            let tempProducts= getState().shop.products && getState().shop.products.filter(p=>{
+                
+                return product.productId!==p.productId
+            })
+            console.log(tempProducts)
+            dispatch({type:actionType.DELETE_PRODUCT,payload:tempProducts})
+            
+       
+        
+    }
+}
+
  

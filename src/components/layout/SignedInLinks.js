@@ -11,6 +11,7 @@ const SignedInLinks = (props) => {
             {/* left side links */}
             <ul className="navbar-nav mr-auto">
                 <li className="nav-item nav-link" ><Link to={"/createshop"}>Create Shop</Link></li>
+                
             </ul>
             {/* right side links*/}
             <ul className="navbar-nav ">

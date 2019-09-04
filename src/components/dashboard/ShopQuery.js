@@ -31,10 +31,11 @@ const mapStateToProps = (state) => {
 export default compose(
     connect(mapStateToProps),
     firestoreConnect((props)=>{
-        if(props.cat !== ""){
-            return ([{ collection:"shops",where:["category","==",props.cat]}])
+        if(props.fromCollection === "" || props.where1 === ""|| props.where2=== "" ||props.condition=== ""){
+            return ([{ collection:"shops"}])
         }
-        return ([{ collection:"shops"}])
+        return ([{ collection:props.fromCollection,where:[props.where1,props.condition,props.where2]}])
+        
         
     })
     )(Categories)

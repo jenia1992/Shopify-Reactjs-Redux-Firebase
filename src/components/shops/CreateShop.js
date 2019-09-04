@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux'
-import { createShop } from '../../store/actions/shopAction'
+import * as actionType from '../../store/actions/index'
 class CreateShop extends Component {
   constructor(props){
     super(props);
@@ -19,7 +19,10 @@ class CreateShop extends Component {
   SubmitHandler=event=>{
     event.preventDefault();
     // console.log(this.state)
-    this.props.createShop(this.state)
+    if(this.state.category !=="Default"){
+      this.props.createShop(this.state)
+    }
+    
   }
   render() {
     let categoriesList=(
@@ -57,7 +60,7 @@ class CreateShop extends Component {
 }
 const mapDispatchToProps=(disatch)=>{
   return{
-    createShop:(shop)=>disatch(createShop(shop))
+    createShop:(shop)=>disatch(actionType.createShop(shop))
     
   }
 }

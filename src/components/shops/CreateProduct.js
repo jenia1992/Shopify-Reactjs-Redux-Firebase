@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { connect } from 'react-redux'
-import { createProduct,uploadImgToStorage } from '../../store/actions/shopAction'
+import * as actionType from '../../store/actions/index'
 class CreateProduct extends Component {
   constructor(props){
     super(props);
@@ -9,7 +9,8 @@ class CreateProduct extends Component {
         price:"",
         quantity:1,
         shopId:"",
-        url:""
+        url:"",
+        file:null
         
   }
 }
@@ -22,15 +23,17 @@ componentDidMount(){
   SubmitHandler=event=>{
     event.preventDefault();
     // console.log(this.state)
-    this.props.createProduct(this.state)
+    this.props.uploadImgToStorage(this.state.file).then(res=>{
+      this.setState({url:res.url,file:res.file},()=>{
+        this.props.createProduct(this.state)
+      })
+    })
+    
   }
    onUploadHandler=(event)=>{
     // console.log("FILe",event.target.files[0])
-    this.props.uploadImgToStorage(event.target.files[0]).then(res=>{
-      this.setState({url:res})
-    }).catch(err=>{
-      console.log(err)
-    })
+    
+    this.setState({url:URL.createObjectURL(event.target.files[0]),file:event.target.files[0]})
     
     
      
@@ -65,8 +68,8 @@ componentDidMount(){
 }
 const mapDispatchToProps=(disatch)=>{
   return{
-    createProduct:(product)=>disatch(createProduct(product)),
-    uploadImgToStorage:(imgdata)=>disatch(uploadImgToStorage(imgdata))
+    createProduct:(product)=>disatch(actionType.createProduct(product)),
+    uploadImgToStorage:(imgdata)=>disatch(actionType.uploadImgToStorage(imgdata))
    
   }
 }

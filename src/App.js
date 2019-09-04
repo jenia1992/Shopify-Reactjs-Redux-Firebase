@@ -10,11 +10,12 @@ import './App.css';
 
 class App extends Component { 
     render(){
+      
       const route=(
         <Switch>
-          <Route exact path="/" component={DashBoard} />
+          <Route exact path="/" component={SignIn} />
           <Route path="/shop/:id" component={ShopDetails} />
-          <Route  path="/signin" component={SignIn} />
+          <Route  path="/dashboard" component={DashBoard} />
           <Route  path="/createshop" component={CreateShop} />
           <Route  path="/createproduct" component={CreateProduct} />
           {/* <Route  path="/login" component={Login} />
