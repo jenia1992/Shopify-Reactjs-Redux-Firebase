@@ -15,8 +15,11 @@ class ShopDetails extends Component {
       }
     }
     componentDidMount(){
+        
     this.props.getShopProducts(this.props.shopId)
-    console.log(this.props.shopId)
+    // console.log(this.props.shopId)
+    this.props.getProductsFromCart()
+    
     
     }
     componentWillUnmount(){
@@ -27,23 +30,35 @@ class ShopDetails extends Component {
       }
     render(){
     const { shop,auth,shopId } = this.props;
+    // console.log("PROPSSSSSS",this.props)
     if (shop) {
         // console.log(shop)
         return (
             <div className="container">
-                <h1>InSideShop {shop.name}</h1>
-                {auth.uid===shop.ownerId&&<button onClick={()=>this.goCreate()}>Add Product</button>}
+                <h1>{shop.name}</h1>
+                {auth.uid===shop.ownerId&&<div className="col">
+                    <div className="col-6 font-weight-bold">VIEWS:{this.props.views}</div>
+                    <div className="col-6 font-weight-bold">SOLD:{this.props.sold}</div>
+                </div>}
+                {auth.uid===shop.ownerId&&<button className="btn btn-primary" onClick={()=>this.goCreate()}>Add Product</button>}
                 {(auth.uid===shop.ownerId)&&this.state.goCreate?
                 <Redirect to={{
                     pathname: "/createproduct",
-                    state: { shopId:shopId }
+                    state: { shopId:shopId ,shopCategory:shop.category }
                 }}>ADD Product</Redirect>
                 :null
                 }
+
+                
+
                 {this.props.isLoaded&&<ProductList 
+                addProductToCart={this.props.addProductToCart}
                 deleteProduct={this.props.deleteProduct} 
-                isUid={auth.uid===shop.ownerId} 
+                rateProduct={this.props.rateProduct}
+                isUid={auth.uid===shop.ownerId}
+                isCart={!auth.uid ? true : false} 
                 products={this.props.products} 
+                productViews={this.props.productViews}
                 />}
                 
             </div>
@@ -60,7 +75,6 @@ class ShopDetails extends Component {
 }
 }
 const mapStateToProps = (state, ownProps) => {
-    console.log(state)
     const id = ownProps.match.params.id;
     const shops = state.firestore.data.shops
     const shop = shops ? shops[id] : null
@@ -70,15 +84,21 @@ const mapStateToProps = (state, ownProps) => {
         shop: shop,
         auth:state.firebase.auth,
         products:state.shop.products,
+        views:state.shop.views,
+        sold:state.shop.sold,
         isLoaded:state.shop.prodLoaded
     }
 }
 const mapDispatchToProps=(disatch)=>{
     return{
-        createProduct:(product)=>disatch(actionType.createProduct(product)),
         getShopProducts:(shopId)=>disatch(actionType.getShopProducts(shopId)),
         unSetProducts:()=>disatch(actionType.unSetProducts()),
-        deleteProduct:(productID)=>disatch(actionType.deleteProduct(productID))
+        deleteProduct:(productID)=>disatch(actionType.deleteProduct(productID)),
+        addProductToCart:(product)=>disatch(actionType.addProductToCart(product)),
+        getProductsFromCart:()=>disatch(actionType.getProductsFromCart()),
+        rateProduct:(value,product)=>disatch(actionType.rateProduct(value,product)),
+        productViews:(product)=>disatch(actionType.productViews(product)),
+        
     }
   }
 export default compose(

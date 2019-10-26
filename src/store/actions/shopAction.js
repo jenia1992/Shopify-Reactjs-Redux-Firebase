@@ -3,7 +3,8 @@ import {storage} from '../../config/fbConfig'
 export const createShop = (shop) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firestore = getFirestore();
-        firestore.collection('shops').add({
+        return new Promise((resolve,reject)=>{
+            firestore.collection('shops').add({
             ownerId:getState().firebase.auth.uid,
             ...shop,
             createdAt: new Date(),
@@ -11,8 +12,11 @@ export const createShop = (shop) => {
 
         }).then(() => {
             dispatch(updateCreateShop(shop))
+            resolve("/userarea")
         }).catch((err) => {
             dispatch(updateErrorShop(err))
+        })
+           
         })
 
     }
@@ -37,6 +41,13 @@ export const createProduct = (product) => {
         firestore.collection("products").add({
             //product --> name,price,quantity,shopId
             ...product,
+            star1:0,
+            star2:0,
+            star3:0,
+            star4:0,
+            star5:0,
+            views:0,
+            sold:0,
             ownerId:auth.uid,
             createdAt: new Date()
         }).then((productRes) => {
@@ -72,9 +83,10 @@ export const getShopProducts = (shopId) => {
 
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         let productsArr=[]
+        let views=0
+        let sold=0
         let shopsRef = getFirestore().collection('products');
-        let query = shopsRef.where('shopId', '==', shopId).get()
-            .then(snapshot => {
+        shopsRef.where('shopId', '==', shopId).get().then(snapshot => {
                 if (snapshot.empty) {
                     console.log('No matching documents.');
                     return;
@@ -86,7 +98,16 @@ export const getShopProducts = (shopId) => {
                     
                 });
                 // console.log(productsArr)
-                dispatch(updateGetProducts(productsArr))
+                views+=productsArr.map(p=>{
+                    console.log("views",p)
+                    return p.views
+                })
+                sold+=productsArr.map(p=>{
+                    console.log("sold",p.sold)
+                    return p.sold
+                })
+                console.log(views,sold)
+                dispatch(updateGetProducts({productsArr,views,sold}))
             })
             .catch(err => {
                 console.log('Error getting documents', err);
@@ -167,4 +188,49 @@ export const deleteProduct = (product) => {
     }
 }
 
- 
+
+export const getShopByName = (coll,searchText) => {
+
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        let productsArr=[]
+        let shopsRef = getFirestore().collection(coll);
+        let query = shopsRef.orderBy("name").startAt(searchText).limit(3).get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    console.log('No matching documents.');
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    console.log(doc.id, '=>', doc.data());
+                    // productsArr.push({productId:doc.id,...doc.data()})
+                    
+                });
+                // console.log(productsArr)
+                // dispatch(updateGetProducts(productsArr))
+            })
+            .catch(err => {
+                console.log('Error getting documents', err);
+            });
+    }
+}
+export const rateProduct = (value,product)=>{
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        // console.log("PRODDDD",product.productId || product.id)
+        // console.log("vallllllll",value)
+        let increment = getFirebase().firestore.FieldValue.increment(1)
+        let productRef = getFirestore().collection("products").doc(product.productId || product.id)
+        productRef.update({[value]:increment})
+        // dispatch({type:actionType.RATE_PRODUCT,payload:null})
+    }
+}
+export const productViews = (product)=>{
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        // console.log("PRODDDD",product.productId || product.id)
+        // console.log("vallllllll",value)
+        let increment = getFirebase().firestore.FieldValue.increment(1)
+        let productRef = getFirestore().collection("products").doc(product.productId || product.id)
+        productRef.update({views:increment})
+        // dispatch({type:actionType.RATE_PRODUCT,payload:null})
+    }
+}

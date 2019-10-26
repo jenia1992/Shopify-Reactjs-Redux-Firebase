@@ -1,4 +1,5 @@
 import * as actionType from "./actionType"
+import { Redirect} from 'react-router-dom'
 export const signIn =()=>{
     return(dispatch,getState,{getFirebase,getFirestore})=>{
         const firebase =getFirebase();
@@ -36,6 +37,7 @@ export const signOut=()=>{
         const firebase = getFirebase();
         firebase.auth().signOut().then(()=>{
             dispatch(updateSignOut())
+            
         })
     }
 }
@@ -43,5 +45,12 @@ export const updateSignOut=()=>{
     return {
         type:actionType.LOGIN_SUCCESS,
         payload:'SIGNOUT_SUCCESS'
+    }
+}
+
+export const updateDashBoardForm=(form)=>{
+    return {
+        type:actionType.DASHBOARD_FORM_UPDATE,
+        payload:form
     }
 }

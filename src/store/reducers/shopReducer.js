@@ -4,6 +4,8 @@ const initState = {
     shops: [],
     products: [],
     prodLoaded: false,
+    views:0,
+    sold:0,
     shopError: null
 }
 const ShopReducer = (state = initState, action) => {
@@ -25,7 +27,7 @@ const ShopReducer = (state = initState, action) => {
             return state
 
         case actionType.URL_CREATE_ERROR:
-            return state
+            return updateObject(state, { shophError: action.payload })
         case actionType.URL_DELETE:
             return state
 
@@ -34,7 +36,7 @@ const ShopReducer = (state = initState, action) => {
 
 
         case actionType.GET_PRODUCTS:
-            return updateObject(state, { products: action.payload, prodLoaded: true })
+            return updateObject(state, { products: action.payload.productsArr,views:action.payload.views,sold:action.payload.sold, prodLoaded: true })
 
         case actionType.UNSET_PRODUCTS:
             return updateObject(state, { products: [], prodLoaded: false })
@@ -44,6 +46,15 @@ const ShopReducer = (state = initState, action) => {
 
         case actionType.DELETE_PRODUCT_ERROR:
             return updateObject(state, { shopError:action.payload })
+
+        case actionType.ADD_PRODUCT_TO_CART:
+            return updateObject(state,{cart:action.payload})
+
+        case actionType.ADD_PRODUCT_TO_CART_ERROR:
+            return updateObject(state,{shopError:action.payload})
+        case actionType.RATE_PRODUCT:
+            return state
+        
 
         default:
             return state

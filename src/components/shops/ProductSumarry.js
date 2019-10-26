@@ -3,41 +3,48 @@ import Rating from 'react-rating'
 import startYellow from '../../images/yellow-star.svg'
 import startBlue from '../../images/blue-star.svg'
 import startGrey from '../../images/grey-star.svg'
-const ProductSummary = ({ product, isUid, deleteProduct }) => {
-    // console.log("!!!!!!!!!!!!!!!!!", product.productId)
+const ProductSummary = ({ product, isUid,isCart, deleteProduct ,addProductToCart,rateProduct,productViews}) => {
+    // console.log("!!!!!!!!!!!!!!!!!", product.productId || product.id)
+    const raitingHandler=(p)=>{
+        let res=(5*product.star5 + 4*product.star4 + 3*product.star3 + 2*product.star2 + 1*product.star1) / (product.star5+product.star4+product.star3+product.star2+product.star1)
+        return res
+    }
     return (
 
-        <div className="card ">
-            <img className="card-img-top mx-auto border-bottom" src={product.url || "http://via.placeholder.com/150x150"} alt="Card image cap" />
-            <div className="card-body">
-                <h3 className="card-title">{product.name.replace(/^\w/, c => c.toUpperCase())}</h3>
+        <div className="card  h-100">
+            <div className="img-hover-zoom">
+            <img className="card-img-top mx-auto border-bottom myImg" src={product.url || "http://via.placeholder.com/150x150"} alt="Card image cap" />
+            </div>
+            <div className="card-body ">
+                <p className="card-title font-weight-bold">{product.name.replace(/^\w/, c => c.toUpperCase())}</p>
                 <h5 className="card-title">{product.price}$</h5>
 
 
                 <Rating
-                    placeholderRating={3.5}
+                    placeholderRating={raitingHandler(product)}
                     emptySymbol={<img src={startGrey} style={{ height: "1.7em" }} />}
                     placeholderSymbol={<img src={startBlue} style={{ height: "1.7em" }} />}
                     fullSymbol={<img src={startYellow} style={{ height: "1.7em" }} />}
+                    onClick={(value)=>rateProduct("star"+value,product)}
                 />
 
-
+                {/* BUTTONS */}
                 <div className="d-flex justify-content-center">
-                    <button className="btn btn-primary m-1"><i className="material-icons pt-1">add_shopping_cart</i></button>
-                    <button type="button" className="btn btn-warning m-1" data-toggle="modal" data-target="#ModalCenter">
+                    {isCart ?null: <button onClick={() => addProductToCart(product)} className="btn btn-primary m-1"><i className="material-icons pt-1">add_shopping_cart</i></button>}
+                    <button onClick={() => productViews(product)} type="button" className="btn btn-warning m-1" data-toggle="modal" data-target={`#${product.productId || product.id}` }>
                     <i className="material-icons pt-1">pageview</i>
                     </button>
                     {isUid && <button onClick={() => deleteProduct(product)} className="btn btn-danger m-1"><i className="material-icons pt-1">delete</i></button>}
                 </div>
 
             </div>
-            <div  className="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+            <div  className="modal fade" id={`${product.productId || product.id}` } tabIndex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
                         <div style={{minWidth:"100%"}}  className="modal-dialog modal-dialog-centered" role="document">
 
                             <div style={{height:"90vh"}} className="modal-content">
 
                                 <div className="modal-header">
-                                    <h5 claclassNamess="modal-title" id="ModalLongTitle">{product.name.replace(/^\w/, c => c.toUpperCase())}</h5>
+                                    <h5 className="modal-title" id="ModalLongTitle">{product.name.replace(/^\w/, c => c.toUpperCase())}</h5>
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>

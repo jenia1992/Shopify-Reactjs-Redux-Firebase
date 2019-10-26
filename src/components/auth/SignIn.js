@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import styles from './signin.module.css';
 import { connect } from 'react-redux'
 import * as actionType from '../../store/actions/index'
+import {Redirect} from 'react-router-dom'
 import { isFulfilled } from 'q';
 class SignIn extends Component {
     render() {
-        const { authError } =this.props
+        const { authError,auth } =this.props
+        
         return (
             // <div className="row text-center mt-5">
             //     <div className="col mt-5">
@@ -18,6 +20,10 @@ class SignIn extends Component {
             // </div>
             
             <div className={styles.body}>
+                {auth.uid&&<Redirect to={{pathname: "/dashboard",
+            // state: {  }
+}}></Redirect>}
+                
                 <header id={styles.showcase}>
                     <h1>Welcome To Shopify Ecommerce Site </h1>
                 </header>
@@ -36,14 +42,15 @@ class SignIn extends Component {
             <div>
                 {authError ? <p style={{color:"red"}}>{authError}</p>:null}
             </div>
+            
             </div>
         )
     }
 }
 const mapStateToProps = (state) => {
-    console.log("SignIn Component",state)
     return {
-        authError: state.auth.authError
+        authError: state.auth.authError,
+        auth:state.firebase.auth
     }
 }
 const mapDispatchToProps = (dispatch) => {

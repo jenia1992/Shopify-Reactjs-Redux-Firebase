@@ -7,7 +7,7 @@ class Layout extends Component {
   
   render(){
     return (
-      <div>
+      <div className="bgMain">
           <NavBar/>
       <div className="container-fluid">
         {this.props.children}

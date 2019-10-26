@@ -15,17 +15,18 @@ class CreateProduct extends Component {
   }
 }
 componentDidMount(){
- this.setState({shopId:this.props.location.state.shopId})
+ this.setState({shopId:this.props.location.state.shopId,category:this.props.location.state.shopCategory})
 }
   onChangeHandler=(event)=>{
     this.setState({[event.target.name]:event.target.value})
   }
   SubmitHandler=event=>{
     event.preventDefault();
-    // console.log(this.state)
+    if(this.state.file===null) return
     this.props.uploadImgToStorage(this.state.file).then(res=>{
       this.setState({url:res.url,file:res.file},()=>{
         this.props.createProduct(this.state)
+        this.props.history.push(`/shop/${this.state.shopId}`)
       })
     })
     
@@ -41,22 +42,22 @@ componentDidMount(){
   render() {
     
     return (
-      <div>
+      <div  className="d-flex justify-content-center text-center font-weight-bold bgGrey mt-5">
 
-        <h1>Create Product</h1>
-        <form onSubmit={this.SubmitHandler} className="d-flex flex-column align-items-center">
-          <label htmlFor="name">Product Name</label>
-          <input placeholder="Product Name" type="text" value={this.state.name} onChange={event=>this.onChangeHandler(event)}  name="name"  />
+        
+        <form onSubmit={this.SubmitHandler} className=" col-6 mt-5">
+          <label  htmlFor="name">Product Name</label>
+          <input  className="form-control " placeholder="Product Name" type="text" value={this.state.name} onChange={event=>this.onChangeHandler(event)}  name="name"  />
 
           <label htmlFor="price">Price</label>
-          <input placeholder="Price" type="number" value={this.state.price} onChange={event=>this.onChangeHandler(event)}  name="price"  />
+          <input  className="form-control " placeholder="Price" type="number" value={this.state.price} onChange={event=>this.onChangeHandler(event)}  name="price"  />
 
           <label htmlFor="quantity">Quantity</label>
-          <input placeholder="Quantity" type="number" value={this.state.quantity} onChange={event=>this.onChangeHandler(event)}  name="quantity"  />
+          <input  className="form-control " placeholder="Quantity" type="number" value={this.state.quantity} onChange={event=>this.onChangeHandler(event)}  name="quantity"  />
 
           <label htmlFor="imgupload">Product Image</label>
-          <input type="file"  name="imgupload" onChange={(event)=>this.onUploadHandler(event)} />
-          {this.state.url !== "" ?<img src={this.state.url}/>:null}
+          <input  className="form-control " type="file"  name="imgupload" onChange={(event)=>this.onUploadHandler(event)} />
+          {this.state.url !== "" ?<img style={{maxHeight:"30vh"}} src={this.state.url}/>:null}
           <input className="btn btn-primary mt-1" type="submit" value="Create" />
 
         </form>

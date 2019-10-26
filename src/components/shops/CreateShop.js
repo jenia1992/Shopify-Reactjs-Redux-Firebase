@@ -6,6 +6,7 @@ class CreateShop extends Component {
     super(props);
     this.state={
         name:"",
+        about:"",
         category:""
 
   }
@@ -20,13 +21,18 @@ class CreateShop extends Component {
     event.preventDefault();
     // console.log(this.state)
     if(this.state.category !=="Default"){
-      this.props.createShop(this.state)
+      this.props.createShop(this.state).then(res=>{
+        // console.log(res)
+        this.props.history.push(res)
+      }).catch(err=>{
+        console.log(err)
+      })
     }
     
   }
   render() {
     let categoriesList=(
-      <select name="category" onChange={event=>this.onChangeHandler(event)}>
+      <select className="form-control" name="category" onChange={event=>this.onChangeHandler(event)}>
         {
           ["Default","Electricity","PC","Clothes","TV","Books"].map(cat=>{
             return (
@@ -37,16 +43,21 @@ class CreateShop extends Component {
       </select>
     )
     return (
-      <div>
-
-        <h1>Create Shop</h1>
-        <form onSubmit={this.SubmitHandler} className="d-flex flex-column align-items-center">
-          <label htmlFor="name">First Name</label>
-          <input placeholder="Shop Name" type="text" value={this.state.name} onChange={event=>this.onChangeHandler(event)} id="name" name="name"  />
+      <div className="d-flex justify-content-center text-center font-weight-bold bgGrey mt-5">
+        
+        <form onSubmit={this.SubmitHandler} className="col-6 mt-5">
+          
+          <label htmlFor="name">Shop Name</label>
+          <input className="form-control " placeholder="Shop Name" type="text" value={this.state.name} onChange={event=>this.onChangeHandler(event)} id="name" name="name"  />
 
           <label htmlFor="category">Category</label>
           {/* <input placeholder="shop Category" type="text" value={this.state.category} onChange={event=>this.onChangeHandler(event)} id="category" name="category" /> */}
           {categoriesList}
+          
+          <div className="form-group">
+            <label Htmlfor="about">About</label>
+            <textarea name="about" className="form-control" maxLength="80" rows="5" id="about" value={this.state.about} onChange={event=>this.onChangeHandler(event)}></textarea>
+          </div>
 
           
           <input className="btn btn-primary mt-1" type="submit" value="Create" />
